@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { AuthContext } from "../auth.context.jsx"   //from  state layer
 import { login, register, logout, getMe } from "../services/auth.api" //from api layer
+import { useEffect } from "react"
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -53,6 +54,21 @@ export const useAuth = () => {
         setUser(data.user)
         setLoading(false)
     }
+
+        // Restore session from cookie on every page load/refresh
+        useEffect(() => {
+            const getAndSetUser = async () => {
+                try {
+                    const data = await getMe();
+                    setUser(data?.user ?? null);
+                } catch {
+                    setUser(null);
+                } finally {
+                    setLoading(false);  // ← always unblock the UI
+                }
+            }
+            getAndSetUser();  // ← was accidentally commented out
+        }, [])
 
     return { user, loading, handleRegister, handleLogin, handleLogout }
 }
