@@ -1,0 +1,104 @@
+main {
+    min-height: 100vh;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top right, #1a0b12, #0d0d0d 40%);
+    color: #fff;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    .form-container {
+        width: 100%;
+        max-width: 28rem;
+        background-color: rgba(22, 22, 22, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 2.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+        h1,
+        h2,
+        h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            text-align: center;
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: -1rem;
+            line-height: 1.5;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            width: 100%;
+        }
+    }
+
+    .input-Group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+
+        label {
+            font-size: 0.875rem;
+            color: #b3b3b3;
+            font-weight: 500;
+            margin-left: 0.25rem;
+        }
+
+        input {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            outline: none;
+            padding-inline: 1.25rem;
+            padding-block: 0.875rem;
+            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.25);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.25);
+            }
+
+            &:focus {
+                border-color: rgba(225, 3, 77, 0.5);
+                background: rgba(0, 0, 0, 0.4);
+                box-shadow: 0 0 0 4px rgba(225, 3, 77, 0.1);
+            }
+
+            &:hover:not(:focus) {
+                border-color: rgba(255, 255, 255, 0.15);
+                background: rgba(0, 0, 0, 0.35);
+            }
+        }
+    }
+
+    a {
+        color: #e1034d;
+        text-decoration: none;
+        cursor: pointer;
+    }
+}
