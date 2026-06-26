@@ -1,5 +1,6 @@
 const mongoose =require('mongoose');
 
+
 /**
  * -job description schema
  * -resume text
@@ -72,8 +73,9 @@ const behavioralQuestionSchema=new mongoose.Schema({
 
 
 const skillGapSchema=new mongoose.Schema({
-        skill:String,
-        required:[true,"skill name is required"],
+        skill:{
+            type:String,
+          required:[true,"skill name is required"]},
         severity:{
             type:String,
             enum:["low","med","high"],
@@ -120,6 +122,10 @@ const interviewReportSchema=new mongoose.Schema({
     behavioralQuestions:[behavioralQuestionSchema],
     skillGaps:[skillGapSchema],
     preparationPlan:[preparationPlanSchema],
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+    }
    
 },{timestamps:true})
 

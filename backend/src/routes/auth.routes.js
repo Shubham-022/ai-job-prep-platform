@@ -5,7 +5,7 @@ const authRouter = express.Router();
 //require all controller here
 
 const authController = require("../controllers/auth.controller")
-const authMiddlewares = require("../middlewares/auth.middlewares")
+const authMiddlewares = require("../middlewares/auth.middleware")
 
 
 authRouter.post("/register", authController.registerUserController);
