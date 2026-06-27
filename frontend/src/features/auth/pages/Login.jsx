@@ -13,13 +13,14 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await handleLogin({ email, password });
-        navigate("/")
+        try {
+            await handleLogin({ email, password });
+            navigate("/")
+        } catch (error) {
+            // Error is already logged in useAuth, UI can stay on the same page
+        }
+    }
 
-    }
-    if (loading) {
-        return (<main><h1>Loading......</h1></main>)
-    }
     return (
         <main>
             <div className="form-container">
@@ -40,14 +41,13 @@ const Login = () => {
                             type="password" id="password" name="password" placeholder='enter your password' />
                     </div>
 
-                    <button className='button primary-button'>Login</button>
+                    <button disabled={loading} className='button primary-button'>
+                        {loading ? 'Loading...' : 'Login'}
+                    </button>
 
                     <div className='text-center'>
                         <p>Don't have an account?<Link to="/register">Register</Link></p>
                     </div>
-
-
-
 
                 </form>
             </div>

@@ -12,11 +12,12 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await handleRegister({ username, email, password });
-        navigate("/");
-    }
-    if (loading) {
-        return (<main><h1>Loading....</h1></main>)
+        try {
+            await handleRegister({ username, email, password });
+            navigate("/");
+        } catch (error) {
+            // Error is already logged in useAuth
+        }
     }
 
     return (
@@ -46,7 +47,10 @@ const Register = () => {
                             type="password" id="password" name="password" placeholder='enter your password' />
                     </div>
 
-                    <button className='button primary-button'>Register</button>
+                    <button disabled={loading} className='button primary-button'>
+                        {loading ? 'Loading...' : 'Register'}
+                    </button>
+                    
                     <div className='text-center'>
                         <p>Already have an account?<Link to="/login">Login</Link></p>
                     </div>

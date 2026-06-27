@@ -1,7 +1,6 @@
 import { useContext } from "react"
 import { AuthContext } from "../auth.context.jsx"   //from  state layer
-import { login, register, logout, getMe } from "../services/auth.api" //from api layer
-import { useEffect } from "react"
+import { login, register, logout } from "../services/auth.api" //from api layer
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -19,7 +18,7 @@ export const useAuth = () => {
         } catch (error) {
             console.error("Login error:", error);
             setUser(null);
-
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -35,6 +34,7 @@ export const useAuth = () => {
         catch (err) {
             console.log(err);
             setUser(null)
+            throw err;
         } finally {
             setLoading(false)
         }
@@ -43,32 +43,15 @@ export const useAuth = () => {
 
     const handleLogout = async () => {
         setLoading(true)
-        const data = await logout()
-        setUser(null)
-        setLoading(false)
+        try {
+            await logout()
+            setUser(null)
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
     }
-
-    const handleGetMe = async () => {
-        setLoading(true)
-        const data = await getMe()
-        setUser(data.user)
-        setLoading(false)
-    }
-
-        // Restore session from cookie on every page load/refresh
-        useEffect(() => {
-            const getAndSetUser = async () => {
-                try {
-                    const data = await getMe();
-                    setUser(data?.user ?? null);
-                } catch {
-                    setUser(null);
-                } finally {
-                    setLoading(false);  // ← always unblock the UI
-                }
-            }
-            getAndSetUser();  // ← was accidentally commented out
-        }, [])
 
     return { user, loading, handleRegister, handleLogin, handleLogout }
 }
