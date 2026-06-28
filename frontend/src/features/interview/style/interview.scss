@@ -44,6 +44,42 @@
                 border-left: 3px solid #e11d48;
             }
         }
+
+        .generate-resume-btn {
+            margin-top: auto;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.85rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3);
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+
+            &:disabled {
+                background: #27272a;
+                color: #71717a;
+                border: 1px solid #3f3f46;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+        }
     }
 
     .main-content {

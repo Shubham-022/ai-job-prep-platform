@@ -1,16 +1,21 @@
-import React,{useState,useRef} from 'react'
+import React,{useState,useRef,useEffect} from 'react'
 import '../style/home.scss'
 import {useInterview} from "../hooks/useInterview.js"
 import {useNavigate} from "react-router"
 
 function Home() {
 
-    const { loading, generateReport } = useInterview();
+    const { loading, generateReport, reports, getReports } = useInterview();
     const navigate = useNavigate();
 
     const [jobDescription, setJobDescription] = useState("")
     const [selfDescription, setSelfDescription] = useState("")
+    const [selectedFile, setSelectedFile] = useState(null)
     const resumeInputRef = useRef()
+
+    useEffect(() => {
+        getReports();
+    }, [getReports]);
 
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current.files[0]
@@ -64,13 +69,30 @@ function Home() {
 
                         <div className="input-group">
                             <label className="section-label">Upload Resume <span className="highlight">(Best Results)</span></label>
-                            <label htmlFor="resume" className="file-upload-box">
+                        <label htmlFor="resume" className={`file-upload-box ${selectedFile ? 'has-file' : ''}`}>
                                 <div className="upload-icon">
-                                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    {selectedFile ? '✅' : (
+                                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    )}
                                 </div>
-                                <span className="upload-text">Click to upload or drag & drop</span>
-                                <span className="upload-hint">PDF or DOCX (Max 5MB)</span>
-                                <input ref={resumeInputRef} type="file" id='resume' accept='.pdf,.docx' />
+                                {selectedFile ? (
+                                    <>
+                                        <span className="upload-text file-name">{selectedFile.name}</span>
+                                        <span className="upload-hint">Click to change file</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="upload-text">Click to upload or drag &amp; drop</span>
+                                        <span className="upload-hint">PDF or DOCX (Max 5MB)</span>
+                                    </>
+                                )}
+                                <input 
+                                    ref={resumeInputRef} 
+                                    type="file" 
+                                    id='resume' 
+                                    accept='.pdf,.docx'
+                                    onChange={(e) => setSelectedFile(e.target.files[0] || null)}
+                                />
                             </label>
                         </div>
 
@@ -104,6 +126,20 @@ function Home() {
                 </div>
 
             </div>
+
+            {reports && reports.length > 0 && (
+                <div className="recent-plans-section">
+                    <h2>My Recent Interview Plans</h2>
+                    <ul className="plans-list">
+                        {reports.map((plan) => (
+                            <li key={plan._id} className="plan-item" onClick={() => navigate(`/interview/${plan._id}`)}>
+                                <span className="plan-title">{plan.title || 'Untitled Interview Plan'}</span>
+                                <span className="plan-date">Generated on {new Date(plan.createdAt).toLocaleDateString()}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             <div className="home-footer">
                 <a href="#">Privacy Policy</a>

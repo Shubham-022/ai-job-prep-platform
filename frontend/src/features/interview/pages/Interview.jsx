@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../style/interview.scss';
 import { useParams } from 'react-router';
 import { useInterview } from '../hooks/useInterview';
 
-
-
-
-
 function Interview() {
   const [activeTab, setActiveTab] = useState('technical');
   const [expandedCards, setExpandedCards] = useState({});
-  const { report } = useInterview();
+  const { interviewId } = useParams();
+  const { report, getReportById, loading, getResumePdf } = useInterview();
+
+  useEffect(() => {
+    if (interviewId && (!report || report._id !== interviewId)) {
+      getReportById(interviewId);
+    }
+  }, [interviewId, report, getReportById]);
 
   const toggleCard = (key) => {
     setExpandedCards(prev => ({ ...prev, [key]: !prev[key] }));
   };
+
+  if (loading || (interviewId && (!report || report._id !== interviewId))) {
+    return (
+      <div className="interview-dashboard">
+        <div style={{ margin: 'auto', textAlign: 'center', color: '#a1a1aa' }}>
+          <p style={{ fontSize: '2rem' }}>⏳</p>
+          <p>Loading your interview report...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!report) {
     return (
@@ -49,6 +63,14 @@ function Interview() {
           onClick={() => setActiveTab('roadmap')}
         >
           Road Map
+        </button>
+        <button 
+          className="generate-resume-btn"
+          onClick={() => getResumePdf(report._id)}
+          disabled={loading}
+        >
+          <span className="btn-icon">📄</span>
+          {loading ? 'Generating...' : 'Generate Resume'}
         </button>
       </div>
 

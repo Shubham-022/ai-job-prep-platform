@@ -30,3 +30,9 @@ export const getAllInterviewReports=async()=>{
     const response =await api.get(`/`)
     return response.data;
 }
+
+//generate resume pdf
+export const generateResumePdf=async({interviewReportId})=>{
+    const response =await api.post(`/resume/pdf/${interviewReportId}`,null,{responseType:"blob"})
+    return response.data;
+}

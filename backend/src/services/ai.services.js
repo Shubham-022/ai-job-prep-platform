@@ -1,5 +1,6 @@
 const {GoogleGenAI}=require("@google/genai");
 const {z}=require("zod");
+const puppeteer = require("puppeteer");
 
 
 
@@ -34,6 +35,7 @@ const interviewReportSchema=z.object({
 
 const generateInterviewReport=async({resume,selfDescription,jobDescription})=>{
 
+
     const prompt=`Generate an interview report for a candidate with the following details:
     Resume:${resume}
     Self-description:${selfDescription}
@@ -53,6 +55,123 @@ const generateInterviewReport=async({resume,selfDescription,jobDescription})=>{
 
 console.log(interviewReportSchema);
 
-module.exports={
-    generateInterviewReport
+
+async function generatePdfFromHtml(htmlContent){
+        const browser=await puppeteer.launch()
+        const page=await browser.newPage()
+        await page.setContent(htmlContent,{waitUntil:"networkidle0"})
+
+        const pdfBuffer =await page.pdf({format:"A4" ,margin:{
+           top:"20mm",
+           bottom:"20mm",
+           left:"15mm",
+           right:"15mm"
+        }})
+        await browser.close()
+        return pdfBuffer
+        
 }
+
+async function generateResumePdf({resume,selfDescription,jobDescription}){
+
+    const resumePdfSchema=z.object({
+        html:z.string().describe("The HTML content of the resume which can be converted to PDF using any library like Puppeteer")
+    })
+
+    const prompt=`
+            You are an expert resume writer and ATS optimization specialist.
+
+            Generate a professional, ATS-friendly, single-page resume based on the following information.
+
+            Candidate Resume:
+            ${resume}
+
+            Candidate Self Description:
+            ${selfDescription}
+
+            Target Job Description:
+            ${jobDescription}
+
+            Instructions:
+
+            - Analyze the candidate's existing resume and the target job description.
+            - Optimize the resume specifically for this job.
+            - Use keywords from the job description wherever appropriate.
+            - Never fabricate experience, projects, education, certifications, or achievements that are not supported by the provided information.
+            - You may rewrite and reorganize the content to make it more impactful and ATS-friendly.
+            - Improve grammar, wording, formatting, and readability.
+            - Quantify achievements whenever the provided information allows.
+            - The final resume should sound natural and human-written, not AI-generated.
+            - Keep the resume concise and professional.
+            - The resume should fit within one A4 page.
+
+            Resume Sections:
+            - Full Name
+            - Professional Title
+            - Contact Information
+            - Professional Summary
+            - Technical Skills
+            - Projects
+            - Work Experience (if available)
+            - Education
+            - Certifications (if available)
+            - Achievements (if available)
+
+            Design Requirements:
+            - Return ONLY valid HTML.
+            - Include all CSS inside a <style> tag.
+            - Use modern typography with a clean professional layout.
+            - Use subtle colors only for headings and section dividers.
+            - Maintain good spacing and alignment.
+            - Ensure the HTML is printable on an A4 page.
+            - Do not use external CSS, Bootstrap, Tailwind, CDN, JavaScript, or images.
+            - Use semantic HTML elements.
+
+            Links:
+            - GitHub, LinkedIn, Portfolio, Email, and Website links must be clickable using proper <a href=""> tags.
+            - Email should use mailto: links.
+            - Phone numbers may use tel: links.
+            - External links should include:
+                target="_blank"
+                rel="noopener noreferrer"
+
+            Output Format:
+
+            Return ONLY a JSON object.
+
+            Example:
+
+            {
+            "html": "<!DOCTYPE html> ... complete HTML here ..."
+            }
+
+            Do not include markdown.
+            Do not wrap the HTML inside triple backticks.
+            Return only valid JSON.
+
+`   
+        const response=await ai.models.generateContent({
+            model:"gemini-3-flash-preview",
+            contents:prompt,
+            config:{
+                responseMimeType:"application/json",
+                responseJsonSchema:z.toJSONSchema(resumePdfSchema)
+            }
+
+        })
+
+        const jsonContent=JSON.parse(response.text);
+
+       
+        const pdfBuffer=await generatePdfFromHtml(jsonContent.html)
+
+        return pdfBuffer;
+
+
+}
+
+module.exports={
+    generateInterviewReport,
+    generateResumePdf
+}
+
