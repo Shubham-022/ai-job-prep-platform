@@ -63,75 +63,134 @@ const resumeDataSchema = z.object({
     contact: z.object({
         email: z.string().describe("Email address"),
         phone: z.string().describe("Phone number with country code"),
-        linkedin: z.string().optional().describe("LinkedIn URL (empty string if unavailable)"),
-        github: z.string().optional().describe("GitHub URL (empty string if unavailable)"),
-        portfolio: z.string().optional().describe("Portfolio/website URL (empty string if unavailable)"),
+        linkedin: z.string().optional().describe("Full LinkedIn profile URL, e.g. 'https://linkedin.com/in/username'. Empty string if unavailable."),
+        github: z.string().optional().describe("Full GitHub profile URL, e.g. 'https://github.com/username'. Empty string if unavailable."),
+        portfolio: z.string().optional().describe("Full portfolio/website URL. Empty string if unavailable."),
     }),
-    summary: z.string().describe("A concise 2-4 sentence professional summary optimized for the target job. Use strong action verbs and keywords from the job description."),
-    skills: z.array(z.string()).describe("Flat list of technical skills ordered by relevance to the target job. Include languages, frameworks, tools, and methodologies."),
+    summary: z.string().describe("A concise 3-4 sentence professional summary. Write in first-person implied tone (no 'I'). Sound human and confident — never robotic or AI-generated. Tailor directly to the target job. Mention years of experience, core strengths, and what value the candidate brings. Use natural language a hiring manager would appreciate."),
+    skills: z.object({
+        languages: z.array(z.string()).describe("Programming languages, e.g. ['JavaScript', 'Python', 'TypeScript', 'Java']"),
+        frontend: z.array(z.string()).describe("Frontend frameworks and libraries, e.g. ['React', 'Next.js', 'Tailwind CSS', 'HTML5', 'CSS3']"),
+        backend: z.array(z.string()).describe("Backend frameworks and runtime, e.g. ['Node.js', 'Express', 'Django', 'Spring Boot']"),
+        database: z.array(z.string()).describe("Databases and ORMs, e.g. ['MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'Prisma']"),
+        tools: z.array(z.string()).describe("Dev tools, version control, CI/CD, e.g. ['Git', 'Docker', 'Webpack', 'Jest', 'Postman']"),
+        cloud: z.array(z.string()).describe("Cloud platforms and services, e.g. ['AWS', 'Vercel', 'Render', 'Firebase', 'GCP']. Empty array if none."),
+    }).describe("Technical skills organized by category. Each category is an array of strings. Use empty arrays for categories with no skills."),
     experience: z.array(z.object({
         role: z.string().describe("Job title"),
         company: z.string().describe("Company name"),
-        duration: z.string().describe("Duration string, e.g. 'Jan 2022 – Dec 2023'"),
-        points: z.array(z.string()).describe("3-5 bullet points. Start each with a strong action verb. Quantify results wherever the data supports it.")
-    })).describe("Work experience in reverse chronological order. Empty array if none."),
+        location: z.string().describe("City, Country or 'Remote'. Use empty string if unknown."),
+        duration: z.string().describe("Duration string, e.g. 'Jan 2022 – Dec 2023' or 'Jun 2023 – Present'"),
+        points: z.array(z.string()).describe("3-5 achievement-oriented bullet points. MUST start with a strong past-tense action verb (Engineered, Architected, Spearheaded, Optimized, Delivered, Reduced, Increased, Automated, etc.). Quantify impact with numbers, percentages, or metrics wherever the data supports it. Focus on outcomes not duties.")
+    })).describe("Work experience in reverse chronological order. Empty array if candidate has no work experience."),
     projects: z.array(z.object({
         name: z.string().describe("Project name"),
-        techStack: z.string().describe("Comma-separated list of technologies used"),
-        points: z.array(z.string()).describe("2-4 bullet points describing what the project does, your role, and measurable outcomes")
-    })).describe("Key projects relevant to the target job"),
+        techStack: z.string().describe("Comma-separated list of key technologies used, e.g. 'React, Node.js, MongoDB, Socket.io'"),
+        liveLink: z.string().optional().describe("Live project URL. Empty string if unavailable."),
+        githubLink: z.string().optional().describe("GitHub repo URL. Empty string if unavailable."),
+        points: z.array(z.string()).describe("3-5 bullet points. Start each with a strong action verb. Describe what the project does, technical challenges solved, your specific contribution, and quantifiable impact (users, performance, scale). Make it sound impressive but truthful.")
+    })).describe("Key projects relevant to the target job, ordered by relevance"),
     education: z.array(z.object({
-        degree: z.string().describe("Degree name, e.g. 'B.Tech in Computer Science'"),
+        degree: z.string().describe("Degree name, e.g. 'B.Tech in Computer Science & Engineering'"),
         institution: z.string().describe("University or institution name"),
-        year: z.string().describe("Graduation year or expected graduation, e.g. '2024' or 'Expected 2025'")
+        location: z.string().describe("City, Country. Empty string if unknown."),
+        year: z.string().describe("Graduation year range or expected, e.g. '2020 – 2024' or 'Expected 2025'"),
+        gpa: z.string().optional().describe("GPA or percentage if notable, e.g. '8.5/10' or '3.8/4.0'. Empty string if not provided or not impressive."),
+        coursework: z.string().optional().describe("Relevant coursework comma-separated. Empty string if not useful.")
     })),
-    certifications: z.array(z.string()).describe("List of certifications. Empty array if none."),
-    achievements: z.array(z.string()).describe("Notable achievements, awards, or honors. Empty array if none.")
+    certifications: z.array(z.object({
+        name: z.string().describe("Certification name"),
+        issuer: z.string().describe("Issuing organization, e.g. 'AWS', 'Google', 'Coursera'"),
+        year: z.string().optional().describe("Year obtained. Empty string if unknown.")
+    })).describe("Professional certifications. Empty array if none."),
+    achievements: z.array(z.string()).describe("Notable achievements, awards, hackathon wins, competitive programming ranks, open-source contributions. Empty array if none."),
+    languages: z.array(z.string()).optional().describe("Languages known, e.g. ['English', 'Hindi']"),
+    awards: z.array(z.string()).optional().describe("Awards or honors received. Empty array if none."),
+    publications: z.array(z.object({
+        title: z.string().describe("Publication title"),
+        publisher: z.string().optional().describe("Publisher name or journal"),
+        year: z.string().optional().describe("Year published")
+    })).optional().describe("Publications or patents. Empty array if none."),
+    volunteer: z.array(z.object({
+        role: z.string().describe("Volunteer job title"),
+        organization: z.string().describe("Organization name"),
+        duration: z.string().optional().describe("Duration of work"),
+        points: z.array(z.string()).optional().describe("Bullet points describing activities")
+    })).optional().describe("Volunteer work details. Empty array if none.")
 })
 
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
     const prompt = `
-            You are an expert resume writer and ATS optimization specialist.
+You are an elite resume writer who has crafted resumes for candidates hired at Google, Amazon, Microsoft, and top startups. You specialize in ATS-optimized, achievement-oriented resumes.
 
-            Generate a professional, ATS-friendly, single-page resume as STRUCTURED JSON based on the following information.
+Generate a structured JSON resume based on the following candidate information.
 
-            Candidate Resume:
-            ${resume}
+═══════════════════════════════════════════════════════
+CANDIDATE'S EXISTING RESUME:
+${resume}
 
-            Candidate Self Description:
-            ${selfDescription}
+CANDIDATE'S SELF DESCRIPTION:
+${selfDescription}
 
-            Target Job Description:
-            ${jobDescription}
+TARGET JOB DESCRIPTION:
+${jobDescription}
+═══════════════════════════════════════════════════════
 
-            Instructions:
+STRICT RULES:
 
-            - Analyze the candidate's existing resume and the target job description.
-            - Optimize the resume specifically for this job.
-            - Use keywords from the job description wherever appropriate.
-            - Never fabricate experience, projects, education, certifications, or achievements that are not supported by the provided information.
-            - You may rewrite and reorganize the content to make it more impactful and ATS-friendly.
-            - Improve grammar, wording, formatting, and readability.
-            - Quantify achievements whenever the provided information allows.
-            - The final resume should sound natural and human-written, not AI-generated.
-            - Keep the resume concise and professional — fit within one A4 page.
-            - Start every bullet point with a strong action verb (Built, Developed, Optimized, Led, Designed, etc.).
-            - Order skills by relevance to the job description.
-            - For contact info, if a field is not available, use an empty string.
+1. NEVER fabricate experience, projects, education, certifications, or achievements not supported by the provided information.
+2. You MAY rewrite, reorganize, and strengthen the wording to be more impactful.
+3. Optimize content for the target job description — mirror its keywords naturally.
+4. Quantify achievements with numbers, percentages, and metrics wherever possible.
+5. Content limits for a realistic one-page fresher resume:
+   - Professional Summary: Maximum 4 lines.
+   - Technical Skills: Include ONLY the most relevant skills. Avoid repetition.
+   - Each Project: Maximum 4 bullet points.
+   - Each bullet point: Maximum 18 words.
+   - Certifications: Maximum 5 certifications.
+   - Achievements: Maximum 4 achievements.
 
-            Resume Sections to populate:
-            - name, title, contact (email, phone, linkedin, github, portfolio)
-            - summary (2-4 sentences)
-            - skills (flat array of strings)
-            - experience (array of role objects with bullet points)
-            - projects (array of project objects with bullet points)
-            - education (array)
-            - certifications (array of strings, empty if none)
-            - achievements (array of strings, empty if none)
+PROFESSIONAL SUMMARY (Maximum 4 lines):
+- Write in third-person implied tone (no "I" or "my")
+- Sound like a confident human professional, NOT an AI
+- Avoid cliché phrases like "results-driven", "passionate professional", "detail-oriented"
+- Instead use specific, concrete language about what the candidate actually does well
+- Reference the target role naturally
 
-            Return ONLY valid JSON matching the schema. Do not include markdown or backticks.
+SKILLS (categorized):
+- languages: Programming languages only
+- frontend: Frontend frameworks, libraries, CSS tools
+- backend: Backend frameworks, runtimes, API tools
+- database: Databases, caching, ORMs
+- tools: Dev tools, CI/CD, testing, version control
+- cloud: Cloud platforms, hosting, DevOps
+- Use empty arrays for categories where the candidate has no skills
+- Order skills within each category by relevance to the target job
+
+EXPERIENCE bullet points:
+- Start EVERY bullet with a strong past-tense action verb (Engineered, Architected, Spearheaded, Optimized, Reduced, Automated, Delivered, Scaled)
+- Focus on OUTCOMES and IMPACT, not job duties
+- Include metrics: "Reduced load time by 40%", "Spearheaded integration that served 10K+ users"
+
+PROJECT bullet points (Maximum 4 bullet points, Max 18 words each):
+- Start with strong action verbs (Built, Developed, Designed, Implemented, Integrated)
+- Highlight technical complexity and real-world impact
+- Keep them concise, punchy, and under 18 words per bullet
+
+EDUCATION:
+- Include GPA only if it's impressive (>8.0/10 or >3.5/4.0)
+- Include relevant coursework only if it adds value for the target job
+
+CERTIFICATIONS (Maximum 5):
+- Include issuing organization and year
+- Only include real, verifiable certifications from the source data
+
+ACHIEVEMENTS (Maximum 4):
+- Select the top 4 most impressive items from source data.
+
+Return ONLY valid JSON matching the schema. No markdown. No backticks.
 `
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
@@ -151,11 +210,6 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 }
 
 
-/**
- * Renders a professional A4 resume PDF from structured data using pdfkit.
- * Mirrors the clean, modern design that was previously done by puppeteer + HTML/CSS.
- * No Chrome or browser required — pure Node.js.
- */
 function buildResumePdf(data) {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({
@@ -168,151 +222,322 @@ function buildResumePdf(data) {
         doc.on("end", () => resolve(Buffer.concat(chunks)));
         doc.on("error", reject);
 
-        const PAGE_W = doc.page.width;
-        const MARGIN_L = 45;
-        const MARGIN_R = 45;
-        const CONTENT_W = PAGE_W - MARGIN_L - MARGIN_R;
+        const ML = 45;                              // margin left
+        const CW = doc.page.width - ML - 45;        // content width
 
-        // ── Colors (professional blue accent, like a modern resume template) ──
-        const PRIMARY = "#1a56db";     // headings & accent
-        const DARK = "#1e293b";        // body text
-        const MUTED = "#64748b";       // secondary text (dates, hints)
-        const DIVIDER = "#cbd5e1";     // light gray lines
+        // ── Colors (Navy, Dark Gray, Light Gray) ──────────────────────────
+        const NAVY    = "#1E3A8A";   // dark navy blue (headings, name, accent)
+        const DARK    = "#1F2937";   // body text (dark gray)
+        const GRAY    = "#4B5563";   // secondary text (dates, locations, tech stack)
+        const LIGHT   = "#D1D5DB";   // dividers (light gray)
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  HEADER — Name + Title + Contact
-        // ══════════════════════════════════════════════════════════════════════
-        doc.fontSize(22).font("Helvetica-Bold").fillColor(DARK)
+        // ══════════════════════════════════════════════════════════════════
+        //  PAGINATION & SPACE-CHECKING UTILITIES
+        // ══════════════════════════════════════════════════════════════════
+        function ensureSpace(neededHeight) {
+            const bottomLimit = doc.page.height - doc.page.margins.bottom;
+            if (doc.y + neededHeight > bottomLimit) {
+                doc.addPage();
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        //  1. HEADER — Name + Title + Clickable Contact Details
+        // ══════════════════════════════════════════════════════════════════
+        doc.fontSize(26).font("Helvetica-Bold").fillColor(NAVY)
             .text(data.name || "Candidate Name", { align: "center" });
 
-        doc.fontSize(11).font("Helvetica").fillColor(PRIMARY)
-            .text(data.title || "", { align: "center" });
+        if (data.title) {
+            doc.moveDown(0.12);
+            doc.fontSize(13).font("Helvetica").fillColor(GRAY)
+                .text(data.title, { align: "center" });
+        }
 
-        doc.moveDown(0.3);
+        doc.moveDown(0.25);
 
-        // Contact line
+        // Contact details as a single centered line with pipe separators
         const c = data.contact || {};
-        const contactParts = [
-            c.email, c.phone,
-            c.linkedin, c.github, c.portfolio
-        ].filter(v => v && v.trim() !== "");
-        if (contactParts.length > 0) {
-            doc.fontSize(8.5).fillColor(MUTED)
-                .text(contactParts.join("  •  "), { align: "center" });
+        const contactItems = [];
+
+        if (c.email) contactItems.push({ text: c.email, link: "mailto:" + c.email });
+        if (c.phone) contactItems.push({ text: c.phone, link: "tel:" + c.phone.replace(/\s/g, "") });
+        if (c.linkedin) contactItems.push({ text: "LinkedIn", link: c.linkedin });
+        if (c.github) contactItems.push({ text: "GitHub", link: c.github });
+        if (c.portfolio) contactItems.push({ text: "Portfolio", link: c.portfolio });
+
+        if (contactItems.length > 0) {
+            const sep = "  |  ";
+            const contactY = doc.y;
+            const fullText = contactItems.map(i => i.text).join(sep);
+            const totalW = doc.fontSize(9.5).font("Helvetica").widthOfString(fullText);
+            let curX = ML + (CW - totalW) / 2;
+
+            contactItems.forEach((item, idx) => {
+                const w = doc.widthOfString(item.text);
+                doc.fontSize(9.5).font("Helvetica").fillColor(NAVY)
+                    .text(item.text, curX, contactY, {
+                        link: item.link,
+                        underline: true,
+                        continued: false
+                    });
+                curX += w;
+                if (idx < contactItems.length - 1) {
+                    doc.fillColor(GRAY).text(sep, curX, contactY, { continued: false, underline: false });
+                    curX += doc.widthOfString(sep);
+                }
+            });
+            doc.y = contactY + 12;
         }
 
         doc.moveDown(0.4);
-        drawLine(doc, MARGIN_L, doc.y, CONTENT_W, PRIMARY, 1.2);
-        doc.moveDown(0.5);
+        drawLine(doc, ML, doc.y, CW, NAVY, 1.2);
+        doc.moveDown(0.4);
 
-        // ══════════════════════════════════════════════════════════════════════
+
+        // ══════════════════════════════════════════════════════════════════
         //  HELPER FUNCTIONS
-        // ══════════════════════════════════════════════════════════════════════
+        // ══════════════════════════════════════════════════════════════════
+
         function sectionHeading(title) {
-            doc.moveDown(0.15);
-            doc.fontSize(10.5).font("Helvetica-Bold").fillColor(PRIMARY)
-                .text(title.toUpperCase(), MARGIN_L);
-            drawLine(doc, MARGIN_L, doc.y + 1, CONTENT_W, DIVIDER, 0.6);
-            doc.moveDown(0.35);
+            ensureSpace(70); // Ensure space for title + line + at least one content row
+            doc.moveDown(0.25);
+            doc.fontSize(13.5).font("Helvetica-Bold").fillColor(NAVY)
+                .text(title.toUpperCase(), ML, doc.y);
+            doc.moveDown(0.1);
+            drawLine(doc, ML, doc.y, CW, NAVY, 0.75);
+            doc.moveDown(0.3);
         }
 
-        function bulletPoint(text) {
-            doc.fontSize(9.2).font("Helvetica").fillColor(DARK)
-                .text("•  " + text, MARGIN_L + 12, doc.y, {
-                    width: CONTENT_W - 12,
-                    align: "justify"
+        function bullet(text) {
+            const bulletChar = "\u2022";
+            const indent = 12;
+            const bulletHeight = doc.fontSize(10.5).font("Helvetica")
+                .heightOfString(text, { width: CW - indent, lineGap: 1.5 });
+            ensureSpace(bulletHeight + 5);
+            
+            doc.fontSize(10.5).font("Helvetica").fillColor(DARK)
+                .text(bulletChar, ML + 2, doc.y, { continued: false });
+            doc.fontSize(10.5).font("Helvetica").fillColor(DARK)
+                .text(text, ML + indent, doc.y - 12, {
+                    width: CW - indent,
+                    lineGap: 1.5
                 });
             doc.moveDown(0.08);
         }
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  PROFESSIONAL SUMMARY
-        // ══════════════════════════════════════════════════════════════════════
+        function entryHeader(leftBold, rightMuted) {
+            const rightW = doc.fontSize(10.5).font("Helvetica").widthOfString(rightMuted);
+            doc.fontSize(11).font("Helvetica-Bold").fillColor(DARK)
+                .text(leftBold, ML, doc.y, { width: CW - rightW - 10 });
+            doc.fontSize(10.5).font("Helvetica").fillColor(GRAY)
+                .text(rightMuted, ML + CW - rightW, doc.y - 13, { width: rightW, align: "right" });
+        }
+
+
+        // ══════════════════════════════════════════════════════════════════
+        //  1. PROFESSIONAL SUMMARY
+        // ══════════════════════════════════════════════════════════════════
         if (data.summary) {
+            const textHeight = doc.fontSize(10.5).font("Helvetica").heightOfString(data.summary, { width: CW, lineGap: 2.0 });
+            ensureSpace(60 + textHeight); // space for heading + body text
             sectionHeading("Professional Summary");
-            doc.fontSize(9.2).font("Helvetica").fillColor(DARK)
-                .text(data.summary, MARGIN_L, doc.y, { width: CONTENT_W, align: "justify" });
-            doc.moveDown(0.45);
+            doc.fontSize(10.5).font("Helvetica").fillColor(DARK)
+                .text(data.summary, ML, doc.y, { width: CW, lineGap: 2.0 });
+            doc.moveDown(0.4);
         }
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  TECHNICAL SKILLS
-        // ══════════════════════════════════════════════════════════════════════
-        if (data.skills && data.skills.length > 0) {
-            sectionHeading("Technical Skills");
-            doc.fontSize(9.2).font("Helvetica").fillColor(DARK)
-                .text(data.skills.join("  ·  "), MARGIN_L, doc.y, { width: CONTENT_W });
-            doc.moveDown(0.45);
-        }
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  WORK EXPERIENCE
-        // ══════════════════════════════════════════════════════════════════════
-        if (data.experience && data.experience.length > 0) {
-            sectionHeading("Work Experience");
-            data.experience.forEach((exp, idx) => {
-                // Role — Company — Duration on one line
-                doc.fontSize(10).font("Helvetica-Bold").fillColor(DARK)
-                    .text(exp.role, MARGIN_L, doc.y, { continued: true, width: CONTENT_W });
-                doc.font("Helvetica").fillColor(MUTED)
-                    .text("  —  " + exp.company + "  (" + exp.duration + ")");
-
-                if (exp.points && exp.points.length > 0) {
-                    exp.points.forEach(pt => bulletPoint(pt));
+        // ══════════════════════════════════════════════════════════════════
+        //  2. EDUCATION
+        // ══════════════════════════════════════════════════════════════════
+        if (data.education && data.education.length > 0) {
+            sectionHeading("Education");
+            data.education.forEach((edu, idx) => {
+                ensureSpace(65); // space for education header details
+                entryHeader(edu.degree, edu.year);
+                
+                // Institute (Italic) + Location
+                doc.fontSize(10.5).font("Helvetica-Oblique").fillColor(GRAY)
+                    .text(edu.institution, ML, doc.y, { continued: true });
+                
+                if (edu.location) {
+                    doc.font("Helvetica").text("  •  " + edu.location);
+                } else {
+                    doc.text("");
                 }
-                if (idx < data.experience.length - 1) doc.moveDown(0.25);
+
+                // CGPA and Coursework as bullet points below (Clean ATS layout)
+                if (edu.gpa) {
+                    bullet("GPA/Percentage: " + edu.gpa);
+                }
+                if (edu.coursework) {
+                    bullet("Relevant Coursework: " + edu.coursework);
+                }
+                if (idx < data.education.length - 1) doc.moveDown(0.35);
             });
-            doc.moveDown(0.45);
+            doc.moveDown(0.4);
         }
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  PROJECTS
-        // ══════════════════════════════════════════════════════════════════════
+
+        // ══════════════════════════════════════════════════════════════════
+        //  3. TECHNICAL SKILLS
+        // ══════════════════════════════════════════════════════════════════
+        const sk = data.skills || {};
+        const leftSkills = [
+            { label: "Languages/Web", items: sk.languages },
+            { label: "Backend", items: sk.backend },
+            { label: "Tools", items: sk.tools }
+        ].filter(cat => cat.items && cat.items.length > 0);
+
+        const rightSkills = [
+            { label: "Frontend", items: sk.frontend },
+            { label: "Database", items: sk.database },
+            { label: "Cloud", items: sk.cloud }
+        ].filter(cat => cat.items && cat.items.length > 0);
+
+        if (leftSkills.length > 0 || rightSkills.length > 0) {
+            ensureSpace(110); // space for technical skills block
+            sectionHeading("Technical Skills");
+            
+            const startY = doc.y;
+            const colW = CW / 2 - 15;
+            
+            // Left Column
+            let leftY = startY;
+            leftSkills.forEach(cat => {
+                doc.fontSize(10.5).font("Helvetica-Bold").fillColor(DARK)
+                    .text(cat.label + ": ", ML, leftY, { width: colW, continued: true });
+                doc.font("Helvetica").fillColor(DARK)
+                    .text(cat.items.join(", "), { lineGap: 1.5 });
+                leftY = doc.y + 2;
+            });
+
+            // Right Column
+            let rightY = startY;
+            rightSkills.forEach(cat => {
+                doc.fontSize(10.5).font("Helvetica-Bold").fillColor(DARK)
+                    .text(cat.label + ": ", ML + colW + 30, rightY, { width: colW, continued: true });
+                doc.font("Helvetica").fillColor(DARK)
+                    .text(cat.items.join(", "), { lineGap: 1.5 });
+                rightY = doc.y + 2;
+            });
+
+            doc.y = Math.max(leftY, rightY) + 12;
+            doc.moveDown(0.4);
+        }
+
+
+        // ══════════════════════════════════════════════════════════════════
+        //  WORK EXPERIENCE
+        // ══════════════════════════════════════════════════════════════════
+        if (data.experience && data.experience.length > 0) {
+            sectionHeading("Experience");
+            data.experience.forEach((exp, idx) => {
+                ensureSpace(60); // space for company header details
+                entryHeader(exp.role, exp.duration);
+                
+                doc.fontSize(10.5).font("Helvetica-Oblique").fillColor(GRAY)
+                    .text(exp.company + (exp.location ? "  •  " + exp.location : ""), ML, doc.y);
+                
+                doc.moveDown(0.12);
+                if (exp.points && exp.points.length > 0) {
+                    exp.points.forEach(pt => bullet(pt));
+                }
+                if (idx < data.experience.length - 1) doc.moveDown(0.3);
+            });
+            doc.moveDown(0.4);
+        }
+
+
+        // ══════════════════════════════════════════════════════════════════
+        //  4. PROJECTS
+        // ══════════════════════════════════════════════════════════════════
         if (data.projects && data.projects.length > 0) {
             sectionHeading("Projects");
             data.projects.forEach((proj, idx) => {
-                doc.fontSize(10).font("Helvetica-Bold").fillColor(DARK)
-                    .text(proj.name, MARGIN_L, doc.y, { continued: true, width: CONTENT_W });
-                doc.fontSize(9).font("Helvetica").fillColor(MUTED)
-                    .text("  |  " + proj.techStack);
-
-                if (proj.points && proj.points.length > 0) {
-                    proj.points.forEach(pt => bulletPoint(pt));
+                ensureSpace(70); // space for project name + tech stack + demo row
+                
+                const rightText = proj.techStack ? proj.techStack : "";
+                const rightW = doc.fontSize(9.5).font("Helvetica-Oblique").widthOfString(rightText);
+                
+                doc.fontSize(11).font("Helvetica-Bold").fillColor(DARK)
+                    .text(proj.name, ML, doc.y, { width: CW - rightW - 10 });
+                
+                if (proj.techStack) {
+                    doc.fontSize(9.5).font("Helvetica-Oblique").fillColor(GRAY)
+                        .text(proj.techStack, ML + CW - rightW, doc.y - 13, { width: rightW, align: "right" });
                 }
-                if (idx < data.projects.length - 1) doc.moveDown(0.25);
+
+                // Links row below name
+                const projLinks = [];
+                if (proj.liveLink) projLinks.push({ text: "Live Demo", url: proj.liveLink });
+                if (proj.githubLink) projLinks.push({ text: "GitHub", url: proj.githubLink });
+                if (projLinks.length > 0) {
+                    doc.fontSize(9).font("Helvetica").fillColor(NAVY);
+                    projLinks.forEach((pl, i) => {
+                        doc.text(pl.text, ML + (i > 0 ? 80 : 0), doc.y, {
+                            link: pl.url,
+                            underline: true,
+                            continued: i < projLinks.length - 1
+                        });
+                        if (i < projLinks.length - 1) {
+                            doc.fillColor(GRAY).text("   •   ", { continued: true, underline: false });
+                        }
+                    });
+                    doc.text("", { continued: false });
+                }
+
+                doc.moveDown(0.12);
+                if (proj.points && proj.points.length > 0) {
+                    proj.points.forEach(pt => bullet(pt));
+                }
+                if (idx < data.projects.length - 1) doc.moveDown(0.35);
             });
-            doc.moveDown(0.45);
+            doc.moveDown(0.4);
         }
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  EDUCATION
-        // ══════════════════════════════════════════════════════════════════════
-        if (data.education && data.education.length > 0) {
-            sectionHeading("Education");
-            data.education.forEach(edu => {
-                doc.fontSize(10).font("Helvetica-Bold").fillColor(DARK)
-                    .text(edu.degree, MARGIN_L, doc.y, { continued: true, width: CONTENT_W });
-                doc.font("Helvetica").fillColor(MUTED)
-                    .text("  —  " + edu.institution + "  (" + edu.year + ")");
-            });
-            doc.moveDown(0.45);
-        }
-
-        // ══════════════════════════════════════════════════════════════════════
-        //  CERTIFICATIONS
-        // ══════════════════════════════════════════════════════════════════════
+        // ══════════════════════════════════════════════════════════════════
+        //  5. CERTIFICATIONS
+        // ══════════════════════════════════════════════════════════════════
         if (data.certifications && data.certifications.length > 0) {
             sectionHeading("Certifications");
-            data.certifications.forEach(cert => bulletPoint(cert));
-            doc.moveDown(0.45);
+            
+            // Render in 2 columns if space allows
+            const startY = doc.y;
+            const colW = CW / 2 - 15;
+            
+            data.certifications.forEach((cert, idx) => {
+                const isLeft = idx % 2 === 0;
+                const curX = isLeft ? ML : ML + colW + 30;
+                const curY = isLeft ? doc.y : startY + (Math.floor(idx / 2) * 32);
+                
+                const bulletChar = "\u2022";
+                doc.fontSize(10.5).font("Helvetica-Bold").fillColor(DARK)
+                    .text(bulletChar, curX, curY, { continued: false });
+                
+                doc.fontSize(10.5).font("Helvetica-Bold").fillColor(DARK)
+                    .text(cert.name, curX + 12, curY, { width: colW - 12, continued: true });
+                
+                if (cert.year) {
+                    doc.font("Helvetica").fillColor(GRAY).text(" (" + cert.year + ")");
+                } else {
+                    doc.text("");
+                }
+
+                if (cert.issuer) {
+                    doc.fontSize(9.5).font("Helvetica-Oblique").fillColor(GRAY)
+                        .text(cert.issuer, curX + 12, doc.y, { width: colW - 12 });
+                }
+            });
+            doc.moveDown(0.4);
         }
 
-        // ══════════════════════════════════════════════════════════════════════
-        //  ACHIEVEMENTS
-        // ══════════════════════════════════════════════════════════════════════
+        // ══════════════════════════════════════════════════════════════════
+        //  6. ACHIEVEMENTS
+        // ══════════════════════════════════════════════════════════════════
         if (data.achievements && data.achievements.length > 0) {
             sectionHeading("Achievements");
-            data.achievements.forEach(ach => bulletPoint(ach));
+            data.achievements.forEach(ach => bullet(ach));
         }
 
         doc.end();
