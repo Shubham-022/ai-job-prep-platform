@@ -3,7 +3,16 @@ const tokenBlacklistModel = require("../models/blacklist.model")
 
 const authUser = async (req, res, next) => {
 
-    const token = req.cookies.token
+    // Support both cookie-based and Authorization header-based auth
+    // Cookie works for same-origin; Bearer token works cross-origin (Vercel -> Render)
+    let token = req.cookies?.token;
+
+    if (!token) {
+        const authHeader = req.headers["authorization"];
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+    }
 
     if (!token) {
         return res.status(401).json({

@@ -7,6 +7,14 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Attach stored token as Authorization header on every request
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+});
 
 export const generateInterviewReport = async ({ resume, selfDescription, jobDescription }) => {
     const formData = new FormData()
@@ -22,19 +30,19 @@ export const generateInterviewReport = async ({ resume, selfDescription, jobDesc
     return response.data;
 }
 
-export const getInterviewReportById=async(interviewId)=>{
-    const response =await api.get(`/report/${interviewId}`)
+export const getInterviewReportById = async (interviewId) => {
+    const response = await api.get(`/report/${interviewId}`)
     return response.data;
 }
 
 //get all reports of logged in user
-export const getAllInterviewReports=async()=>{
-    const response =await api.get(`/`)
+export const getAllInterviewReports = async () => {
+    const response = await api.get(`/`)
     return response.data;
 }
 
 //generate resume pdf
-export const generateResumePdf=async({interviewReportId})=>{
-    const response =await api.post(`/resume/pdf/${interviewReportId}`,null,{responseType:"blob"})
+export const generateResumePdf = async ({ interviewReportId }) => {
+    const response = await api.post(`/resume/pdf/${interviewReportId}`, null, { responseType: "blob" })
     return response.data;
 }

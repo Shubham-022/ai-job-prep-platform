@@ -37,13 +37,14 @@ const registerUserController = async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    maxAge: 24 * 60 * 60 * 1000,
-});
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 24 * 60 * 60 * 1000,
+    });
     return res.status(201).json({
         message: "User registered successfully",
+        token,
         user: {
             id: user._id,
             username: user.username,
@@ -82,13 +83,14 @@ const loginUserController = async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    maxAge: 24 * 60 * 60 * 1000,
-});
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 24 * 60 * 60 * 1000,
+    });
     return res.status(201).json({
         message: "User logged in successfully",
+        token,
         user: {
             id: user._id,
             username: user.username,
