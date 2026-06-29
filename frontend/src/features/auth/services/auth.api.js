@@ -58,7 +58,7 @@ export const logout = async () => {
 
 export const getMe = async () => {
     try {
-        const response = await api.get("/get-me");
+        const response = await api.get("/get-me", { timeout: 10000 });
         return response.data;
     } catch (err) {
         console.log(err);

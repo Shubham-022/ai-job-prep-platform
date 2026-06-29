@@ -10,6 +10,12 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const getAndSetUser = async () => {
+            // If no token stored, skip the API call — user is not logged in
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setLoading(false);
+                return;
+            }
             try {
                 const data = await getMe();
                 setUser(data?.user ?? null);
@@ -19,7 +25,7 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false);
             }
         }
-        getAndSetUser(); 
+        getAndSetUser();
     }, [])
 
     return (
